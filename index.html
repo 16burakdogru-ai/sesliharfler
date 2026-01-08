@@ -3,194 +3,354 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harfleri Öğrenelim - Eğlenceli Giriş</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <title>Harfleri Öğrenelim - Burak Öğretmen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; }
-        body { font-family: 'Quicksand', sans-serif; background: var(--bg); margin: 0; overflow: hidden; user-select: none; }
+        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; }
         
-        /* Giriş Ekranı ve Animasyonlar */
-        #giris-ekrani {
+        /* İMLEÇ AYARI */
+        * { cursor: pointer !important; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Balsamiq Sans', cursive, sans-serif;
+            background: var(--bg); 
+            margin: 0; 
+            overflow: hidden; 
+            user-select: none; 
+            touch-action: manipulation;
+        }
+        
+        /* GİRİŞ EKRANI */
+        #giris-ekrani, #bitis-ekrani {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #74b9ff, #a29bfe); 
+            background: linear-gradient(180deg, #74b9ff, #a29bfe); 
             display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 1000;
             transition: transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
-        
-        .canli-objeler { position: absolute; font-size: 50px; animation: float 4s infinite ease-in-out; }
-        @keyframes float { 
-            0%, 100% { transform: translateY(0) rotate(0deg); } 
-            50% { transform: translateY(-30px) rotate(10deg); } 
-        }
 
-        .baslik-kapsayici { text-align: center; margin-bottom: 50px; background: rgba(255,255,255,0.8); padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 2; }
-        .ana-baslik { font-size: 55px; color: var(--ana); margin: 10px; text-shadow: 2px 2px 0 white; }
-        .alt-baslik { font-size: 28px; color: #2d3436; font-weight: bold; }
+        #bitis-ekrani { display: none; z-index: 2000; background: linear-gradient(135deg, #00b894, #0984e3); }
+
+        #yagmur-alani { position: absolute; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+        .yagan-obje { position: absolute; font-size: 55px; top: -80px; animation: dusme 7s linear infinite; z-index: 1; opacity: 0.8; }
+        @keyframes dusme { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(115vh) rotate(360deg); } }
+
+        .baslik-kapsayici { 
+            text-align: center; background: rgba(255,255,255,0.92); 
+            padding: 30px 40px; border-radius: 40px; z-index: 2; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 4px solid white;
+            width: 80%; max-width: 500px;
+        }
         
-        #play-btn {
-            padding: 25px 70px; font-size: 35px; font-weight: bold;
+        .ana-buton {
+            padding: 20px 50px; font-size: 28px; font-weight: bold; font-family: 'Balsamiq Sans', sans-serif;
             background: #fdcb6e; color: #2d3436; border: none;
-            border-radius: 60px; cursor: pointer; box-shadow: 0 12px 0 #e17055;
-            display: none; z-index: 2; transition: 0.2s;
+            border-radius: 100px; box-shadow: 0 10px 0 #e17055;
+            z-index: 10; margin-top: 30px; transition: 0.2s;
         }
-        #play-btn:active { transform: translateY(8px); box-shadow: 0 4px 0 #e17055; }
+        .ana-buton:active { transform: translateY(6px); box-shadow: 0 4px 0 #e17055; }
 
-        /* Oyun Alanı Tasarımı */
-        #oyun-alani { max-width: 800px; width: 95%; height: 100vh; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .buyuk-harf { font-size: 180px; font-weight: 700; color: #2d3436; cursor: pointer; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
-        .buyuk-harf.bekle { animation: pulse 1.5s infinite; color: var(--ana); }
-        
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; opacity: 0.2; pointer-events: none; transition: 0.5s; }
+        /* SAHNE */
+        #sahne-alani {
+            position: relative; width: 320px; height: 250px;
+            background: #1e272e; border: 10px solid #57606f;
+            border-radius: 30px; overflow: hidden; margin-bottom: 30px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .perde {
+            position: absolute; top: 0; width: 51%; height: 100%;
+            background: #b33939; z-index: 5; 
+            transition: transform 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+            pointer-events: none; 
+        }
+        .perde.sol { left: 0; border-right: 2px solid #822727; }
+        .perde.sag { right: 0; border-left: 2px solid #822727; }
+
+        .perde-acik.sol { transform: translateX(-100%); }
+        .perde-acik.sag { transform: translateX(100%); }
+
+        .ipucu-el {
+            position: absolute; z-index: 10; font-size: 60px; color: white;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            animation: tiklaEfekt 1.5s infinite; pointer-events: none;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        @keyframes tiklaEfekt {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+        }
+
+        .harf-etiket { font-size: 160px; font-weight: 700; color: white; text-shadow: 0 0 25px rgba(255,255,255,0.4); z-index: 2; text-transform: lowercase; }
+
+        /* BALONLAR */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; opacity: 0; pointer-events: none; transition: 0.8s; width: 95%; max-width: 600px; }
         .grid.aktif { opacity: 1; pointer-events: auto; }
         
-        .kart { background: white; border-radius: 25px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); cursor: pointer; transition: 0.3s; border: 4px solid transparent; }
-        .kart:hover { border-color: var(--iyi); transform: translateY(-5px); }
-        .kart-ikon { font-size: 70px; }
-        .kart-metin { font-size: 22px; font-weight: bold; margin-top: 10px; color: #636e72; }
-        .kart.patla { transform: scale(0) rotate(360deg); opacity: 0; }
+        .balon {
+            width: 100%; aspect-ratio: 3/4; border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: white; box-shadow: inset -8px -8px 15px rgba(0,0,0,0.15);
+            animation: salinim 3s infinite ease-in-out;
+            position: relative; 
+        }
+        @keyframes salinim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        #tebrik-ekrani { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-        .tebrik-yazi { font-size: 70px; color: var(--ana); font-weight: bold; animation: bounce 1s infinite; }
+        .kart-ikon { font-size: 60px; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; }
+        .kart-ikon svg { width: 55px; height: 55px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.2)); }
+        .kart-metin { font-size: 22px; font-weight: 700; text-transform: lowercase; }
 
-        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.1);} 100% {transform: scale(1);} }
-        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);} }
+        .patla { animation: patlaAnim 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        @keyframes patlaAnim {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.5); filter: brightness(2); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        #oyun-alani { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        .nav { position: fixed; bottom: 20px; display: flex; gap: 12px; padding: 10px; background: rgba(255,255,255,0.5); border-radius: 40px; }
-        .nav-btn { width: 50px; height: 50px; border-radius: 50%; border: none; background: #fff; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #ccc; }
-        .nav-btn.acik { background: var(--iyi); color: white; box-shadow: 0 4px 0 #00b894; }
-        .nav-btn.aktif { background: var(--ana); color: white; border: 3px solid white; transform: scale(1.1); box-shadow: 0 4px 0 #d63031; }
+        .tanitim-bandi { 
+            position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.75); 
+            color: white; padding: 15px 0; overflow: hidden; white-space: nowrap; 
+            font-size: 20px; font-weight: bold; border-top: 5px solid #fdcb6e; 
+        }
+        .kayan-yazi { display: inline-block; padding-left: 100%; animation: kaydir 20s linear infinite; }
+        @keyframes kaydir { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .nav { position: fixed; bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 95%; }
+        .nav-btn { 
+            width: 45px; height: 45px; border-radius: 50%; border: 3px solid white; 
+            background: #ccc; font-weight: bold; transition: 0.3s;
+            font-family: 'Balsamiq Sans', sans-serif; font-size: 18px;
+        }
+        .nav-btn.aktif { background: var(--ana); color: white; transform: scale(1.2); box-shadow: 0 0 10px rgba(255,118,117,0.5); }
+
+        .konfeti { position: absolute; width: 15px; height: 15px; background: #fff; animation: yagdir 3s linear infinite; }
+        @keyframes yagdir { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        
+        @media (max-width: 600px) {
+            .baslik-kapsayici h1 { font-size: 40px; }
+            .baslik-kapsayici p { font-size: 20px; }
+            .ana-buton { padding: 15px 40px; font-size: 24px; }
+            #sahne-alani { width: 280px; height: 220px; }
+            .harf-etiket { font-size: 140px; }
+            .grid { gap: 15px; }
+        }
     </style>
 </head>
 <body>
 
 <div id="giris-ekrani">
-    <div class="canli-objeler" style="top:10%; left:10%;">🤡</div>
-    <div class="canli-objeler" style="top:20%; right:15%; animation-delay: 1s;">🦁</div>
-    <div class="canli-objeler" style="bottom:15%; left:15%; animation-delay: 2s;">🐘</div>
-    <div class="canli-objeler" style="bottom:20%; right:10%; animation-delay: 0.5s;">🎈</div>
-
-    <div class="baslik-kapsayici">
-        <h1 class="ana-baslik">Harfleri Öğrenelim</h1>
-        <p class="alt-baslik">Eğlence Başlıyor! 🎨</p>
+    <div id="yagmur-alani">
+        <div class="yagan-obje" style="left:8%; animation-delay:0s;">🤡</div>
+        <div class="yagan-obje" style="left:25%; animation-delay:2s;">🦁</div>
+        <div class="yagan-obje" style="left:45%; animation-delay:1s;">🦒</div>
+        <div class="yagan-obje" style="left:65%; animation-delay:4s;">🐰</div>
+        <div class="yagan-obje" style="left:82%; animation-delay:1.5s;">🐒</div>
+        <div class="yagan-obje" style="left:93%; animation-delay:3s;">🐘</div>
     </div>
-    <button id="play-btn" onclick="oyunuBaslat()">BAŞLA ▶️</button>
+    <div class="baslik-kapsayici">
+        <h1 style="color:var(--ana); margin:0;">Harfleri Öğrenelim</h1>
+        <p style="color:#2d3436; margin:10px 0 0 0; text-transform:none;">Burak Öğretmen ile Eğlence Zamanı! 🎨</p>
+    </div>
+    <button id="audio-init-btn" class="ana-buton" onclick="tanitimiBaslat()">Oynat 🔊</button>
+    <button id="start-game-btn" class="ana-buton" style="display:none; background:var(--iyi); box-shadow: 0 10px 0 #218c74;" onclick="oyunuBaslat()">Hadi Başlayalım ▶️</button>
+    <div class="tanitim-bandi">
+        <div class="kayan-yazi" style="text-transform:none;">Burak Öğretmenle Okuma Öğreniyorum. &nbsp;&nbsp;&nbsp;&nbsp; - Burak DOĞRU &nbsp;&nbsp;&nbsp;&nbsp; ✨ &nbsp;&nbsp;&nbsp;&nbsp; </div>
+    </div>
 </div>
 
-<div id="tebrik-ekrani">
-    <div class="tebrik-yazi">HARİKA! 🌟</div>
-    <p style="font-size: 24px;">Sıradaki Harfe Geçiyoruz...</p>
+<div id="bitis-ekrani">
+    <div class="baslik-kapsayici" style="background:white;">
+        <h1 style="color:#0984e3; font-size:60px; margin:0;">TEBRİKLER! 🎉</h1>
+        <p style="font-size:30px; color:#2d3436; margin:20px 0;">Bütün Harfleri Öğrendin!</p>
+        <p style="font-size:22px; color:#636e72;">- Burak Öğretmen -</p>
+    </div>
 </div>
 
 <div id="oyun-alani">
-    <div class="buyuk-harf bekle" id="anaHarf" onclick="harfSesiniBaslat()">a</div>
-    <p id="bilgi-mesaji">Önce harfe tıkla!</p>
+    <div id="sahne-alani" onclick="sahneTiklama()">
+        <div class="perde sol" id="pSol"></div>
+        <div class="perde sag" id="pSag"></div>
+        <div class="ipucu-el" id="sahneIpucu">👇</div>
+        <div class="harf-etiket" id="anaHarf">a</div>
+    </div>
     <div class="grid" id="izgara"></div>
     <div class="nav" id="altNav"></div>
 </div>
 
 <script>
-    // Araba -> Ayakkabı değişikliği yapıldı
+    const svgUtu = `<svg viewBox="0 0 512 512" width="55" height="55"><path d="M448 224h-24c-28.5 0-54.6-9.5-75.3-25.2l-40.3-30.2c-29.3-22-64.8-33.6-101.4-33.6H176c-44.2 0-80 35.8-80 80v9h352c17.7 0 32 14.3 32 32v160c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32v-48c0-83.8 64.6-152.6 146.6-159.2 10.9-38.3 46.2-66.8 88.4-66.8h30.1c42.8 0 84.1 13.6 118.2 39.2l40.3 30.2C437.3 190.2 448 206.3 448 224z" fill="#ecf0f1"/><path d="M0 400h448v32c0 8.8-7.2 16-16 16H16c-8.8 0-16-7.2-16-16v-32z" fill="#95a5a6"/></svg>`;
+    const svgUn = `<svg viewBox="0 0 512 512" width="55" height="55"><path d="M128 48h256l-32 416H160z" fill="#f5f6fa"/><path d="M128 48c0-17.7 14.3-32 32-32h192c17.7 0 32 14.3 32 32s-14.3 32-32 32H160c-17.7 0-32-14.3-32-32z" fill="#dcdde1"/><text x="256" y="320" font-family="Balsamiq Sans" font-weight="bold" font-size="100" text-anchor="middle" fill="#2f3640">UN</text></svg>`;
+    const svgIncir = `<svg viewBox="0 0 512 512" width="55" height="55"><path d="M256 48C160 48 96 128 96 224c0 112 64 240 160 240s160-128 160-240c0-96-64-176-160-176z" fill="#6D214F"/><path d="M256 80c-70 0-120 80-120 160 0 88 50 192 120 192s120-104 120-192c0-80-50-160-120-160z" fill="#B33771"/><circle cx="220" cy="200" r="8" fill="#F8EFBA"/><circle cx="290" cy="220" r="8" fill="#F8EFBA"/><circle cx="256" cy="280" r="8" fill="#F8EFBA"/><circle cx="200" cy="260" r="8" fill="#F8EFBA"/><circle cx="310" cy="180" r="8" fill="#F8EFBA"/><path d="M245 48h22v40h-22z" fill="#009432"/></svg>`;
+
+    const renkler = ['#ff7675', '#74b9ff', '#55efc4', '#fdcb6e', '#a29bfe', '#fab1a0'];
     const veriler = [
-        { harf: 'a', ses: 'Kayıt (1)', nesneler: [{n:'Arı', i:'🐝', s:'Kayıt (2)'}, {n:'At', i:'🐎', s:'Kayıt (3)'}, {n:'Ayakkabı', i:'👞', s:'Kayıt (4)'}] },
-        { harf: 'e', ses: 'Kayıt (5)', nesneler: [{n:'Elma', i:'🍎', s:'Kayıt (6)'}, {n:'Eşek', i:'🐴', s:'Kayıt (7)'}, {n:'El', i:'🖐️', s:'Kayıt (8)'}] },
-        { harf: 'ı', ses: 'Kayıt (9)', nesneler: [{n:'Işık', i:'💡', s:'Kayıt (10)'}, {n:'Ispanak', i:'🥬', s:'Kayıt (11)'}, {n:'Izgara', i:'🍢', s:'Kayıt (12)'}] },
-        { harf: 'i', ses: 'Kayıt (13)', nesneler: [{n:'İnek', i:'🐄', s:'Kayıt (14)'}, {n:'İncir', i:'🌱', s:'Kayıt (15)'}, {n:'İlaç', i:'💊', s:'Kayıt (16)'}] },
-        { harf: 'o', ses: 'Kayıt (17)', nesneler: [{n:'Otobüs', i:'🚌', s:'Kayıt (18)'}, {n:'Okul', i:'🏫', s:'Kayıt (19)'}, {n:'Orman', i:'🌲', s:'Kayıt (20)'}] },
-        { harf: 'ö', ses: 'Kayıt (21)', nesneler: [{n:'Ördek', i:'🦆', s:'Kayıt (22)'}, {n:'Örümcek', i:'🕷️', s:'Kayıt (23)'}, {n:'Öğretmen', i:'👩‍🏫', s:'Kayıt (24)'}] },
-        { harf: 'u', ses: 'Kayıt (25)', nesneler: [{n:'Uçak', i:'✈️', s:'Kayıt (26)'}, {n:'Uyku', i:'😴', s:'Kayıt (27)'}, {n:'Un', i:'🥣', s:'Kayıt (28)'}] },
-        { harf: 'ü', ses: 'Kayıt (29)', nesneler: [{n:'Üzüm', i:'🍇', s:'Kayıt (30)'}, {n:'Ütü', i:'💨', s:'Kayıt (31)'}, {n:'Üç', i:'3️⃣', s:'Kayıt (32)'}] }
+        { harf: 'a', ses: 'Kayıt (1)', nesneler: [{n:'arı', i:'🐝', s:'Kayıt (2)'}, {n:'at', i:'🐎', s:'Kayıt (3)'}, {n:'ayakkabı', i:'👞', s:'Kayıt (4)'}] },
+        { harf: 'e', ses: 'Kayıt (5)', nesneler: [{n:'elma', i:'🍎', s:'Kayıt (6)'}, {n:'eşek', i:'🐴', s:'Kayıt (7)'}, {n:'el', i:'🖐️', s:'Kayıt (8)'}] },
+        { harf: 'ı', ses: 'Kayıt (9)', nesneler: [{n:'ışık', i:'💡', s:'Kayıt (10)'}, {n:'ıspanak', i:'🥬', s:'Kayıt (11)'}, {n:'ızgara', i:'🍢', s:'Kayıt (12)'}] },
+        { harf: 'i', ses: 'Kayıt (13)', nesneler: [{n:'inek', i:'🐄', s:'Kayıt (14)'}, {n:'incir', i:svgIncir, s:'Kayıt (15)'}, {n:'ilaç', i:'💊', s:'Kayıt (16)'}] },
+        { harf: 'o', ses: 'Kayıt (17)', nesneler: [{n:'otobüs', i:'🚌', s:'Kayıt (18)'}, {n:'okul', i:'🏫', s:'Kayıt (19)'}, {n:'orman', i:'🌲', s:'Kayıt (20)'}] },
+        { harf: 'ö', ses: 'Kayıt (21)', nesneler: [{n:'ördek', i:'🦆', s:'Kayıt (22)'}, {n:'örümcek', i:'🕷️', s:'Kayıt (23)'}, {n:'öğretmen', i:'👩‍🏫', s:'Kayıt (24)'}] },
+        { harf: 'u', ses: 'Kayıt (25)', nesneler: [{n:'uçak', i:'✈️', s:'Kayıt (26)'}, {n:'uyku', i:'😴', s:'Kayıt (27)'}, {n:'un', i: svgUn, s:'Kayıt (28)'}] },
+        { harf: 'ü', ses: 'Kayıt (29)', nesneler: [{n:'üzüm', i:'🍇', s:'Kayıt (30)'}, {n:'ütü', i: svgUtu, s:'Kayıt (31)'}, {n:'üç', i:'3️⃣', s:'Kayıt (32)'}] }
     ];
 
-    let mevcutIdx = 0;
-    let acikIdx = 0;
-    let fonMuzigi;
+    let mevcutIdx = 0, acikIdx = 0;
+    // DÜZELTME: Sesi burada 0.005'e ayarlıyoruz.
+    let fonMuzigi = new Audio('sesler/Kayıt (99).m4a');
+    fonMuzigi.loop = true;
+    fonMuzigi.volume = 0.005; // Başlangıçta kısık
 
-    // Fon müziğini başlatma (Kayıt 99)
-    function fonMuzigiBaslat() {
-        fonMuzigi = new Audio('sesler/Kayıt (99).m4a');
-        fonMuzigi.loop = true;
-        fonMuzigi.volume = 0.75; // Tanıtımda %75
-        fonMuzigi.play().catch(e => console.log("Fon müziği için etkileşim bekleniyor."));
+    let aktifSesObjesi = null;
+    let perdeAcikMi = false;
+
+    // Sesi önceden yükle
+    function sesiOnYukle(dosya) {
+        const temp = new Audio(encodeURI(`sesler/${dosya}.m4a`));
+        temp.preload = 'auto';
+        temp.load();
     }
 
     function sesCal(dosya, bittiginde) {
+        if (aktifSesObjesi) {
+            aktifSesObjesi.pause();
+            aktifSesObjesi.currentTime = 0;
+            aktifSesObjesi = null;
+        }
+
         const s = new Audio(encodeURI(`sesler/${dosya}.m4a`));
-        if(bittiginde) s.onended = bittiginde;
-        s.play().catch(e => console.log("Ses hatası."));
+        s.volume = 1.0;
+        aktifSesObjesi = s;
+
+        const oynatma = s.play();
+        if (oynatma !== undefined) {
+            oynatma.then(() => { }).catch(error => {
+                console.log("Ses çalma hatası:", error);
+                if(bittiginde) bittiginde();
+            });
+        }
+
+        if (bittiginde) {
+            s.onended = () => {
+                aktifSesObjesi = null;
+                bittiginde();
+            };
+        }
         return s;
     }
 
-    window.onload = () => {
-        sistemiKur();
-        document.body.addEventListener('click', function start() {
-            fonMuzigiBaslat();
-            sesCal('Kayıt (0)');
-            document.getElementById('play-btn').style.display = 'block';
-            document.body.removeEventListener('click', start);
-        }, {once: true});
-    };
-
-    function oyunuBaslat() {
-        document.getElementById('giris-ekrani').style.transform = 'translateY(-100%)';
-        // Oyun başlayınca fon müziğini %15'e düşür
-        if(fonMuzigi) {
-            fonMuzigi.volume = 0.15;
-        }
+    function tanitimiBaslat() {
+        document.getElementById('audio-init-btn').style.display = 'none';
+        
+        sesiOnYukle('Kayıt (1)');
+        sesiOnYukle('Kayıt (2)');
+        
+        // DÜZELTME: Oynat'a basınca tekrar garantiye alıyoruz
+        fonMuzigi.volume = 0.005; 
+        fonMuzigi.play().catch(e => console.log("Fon müziği hatası"));
+        
+        sesCal('Kayıt (0)', () => {
+            document.getElementById('start-game-btn').style.display = 'block';
+        });
     }
 
-    function harfSesiniBaslat() {
-        document.getElementById('anaHarf').classList.remove('bekle');
-        sesCal(veriler[mevcutIdx].ses, () => {
-            document.getElementById('izgara').classList.add('aktif');
-            document.getElementById('bilgi-mesaji').innerText = "Haydi nesneleri patlat!";
-        });
+    function oyunuBaslat() { 
+        document.getElementById('giris-ekrani').style.transform = 'translateY(-100%)'; 
+        setTimeout(() => { document.getElementById('yagmur-alani').style.display = 'none'; }, 800);
+    }
+
+    function sahneTiklama() {
+        if (!perdeAcikMi) {
+            const ipucu = document.getElementById('sahneIpucu');
+            if(ipucu) ipucu.style.display = 'none';
+
+            document.getElementById('pSol').classList.add('perde-acik');
+            document.getElementById('pSag').classList.add('perde-acik');
+            perdeAcikMi = true;
+            
+            setTimeout(() => {
+                sesCal(veriler[mevcutIdx].ses, () => {
+                    document.getElementById('izgara').classList.add('aktif');
+                });
+            }, 300);
+        } else {
+            sesCal(veriler[mevcutIdx].ses);
+        }
     }
 
     function sistemiKur() {
         const v = veriler[mevcutIdx];
-        document.getElementById('anaHarf').innerText = v.harf;
-        document.getElementById('anaHarf').classList.add('bekle');
+        const anaHarfDOM = document.getElementById('anaHarf');
+        anaHarfDOM.innerText = v.harf;
+        
+        document.getElementById('pSol').classList.remove('perde-acik');
+        document.getElementById('pSag').classList.remove('perde-acik');
         document.getElementById('izgara').classList.remove('aktif');
-        document.getElementById('bilgi-mesaji').innerText = "Önce harfe tıkla!";
+        document.getElementById('sahneIpucu').style.display = 'block';
+        perdeAcikMi = false;
         
         const izgara = document.getElementById('izgara');
         izgara.innerHTML = '';
-        v.nesneler.forEach(n => {
-            const k = document.createElement('div');
-            k.className = 'kart';
-            k.innerHTML = `<div class="kart-ikon">${n.i}</div><div class="kart-metin">${n.n}</div>`;
-            k.onclick = () => {
+        
+        v.nesneler.forEach((n, i) => {
+            const b = document.createElement('div');
+            b.className = 'balon';
+            b.style.backgroundColor = renkler[i % renkler.length];
+            b.style.animationDelay = `${i * 0.2}s`;
+            const ikonIcerik = n.i.includes('<svg') ? n.i : `<div class="kart-ikon">${n.i}</div>`;
+            b.innerHTML = `${ikonIcerik}<div class="kart-metin">${n.n}</div>`;
+            
+            b.onclick = function() {
+                if (this.classList.contains('patla')) return;
+                this.classList.add('patla');
+                this.style.pointerEvents = 'none'; 
+
                 sesCal(n.s, () => {
-                    k.classList.add('patla');
-                    seviyeKontrol();
+                    setTimeout(() => {
+                        if(document.querySelectorAll('.balon:not(.patla)').length === 0) {
+                            if(mevcutIdx === acikIdx && acikIdx < 7) { acikIdx++; }
+                            setTimeout(() => { 
+                                if(mevcutIdx === 7) { oyunuBitir(); } 
+                                else if(mevcutIdx < 7) { mevcutIdx++; sistemiKur(); } 
+                            }, 1000);
+                        }
+                    }, 100);
                 });
             };
-            izgara.appendChild(k);
+            izgara.appendChild(b);
         });
 
         const nav = document.getElementById('altNav');
         nav.innerHTML = '';
         veriler.forEach((x, i) => {
-            const b = document.createElement('button');
-            b.className = `nav-btn ${i === mevcutIdx ? 'aktif' : (i <= acikIdx ? 'acik' : '')}`;
-            b.innerText = x.harf;
-            b.onclick = () => { if(i <= acikIdx) { mevcutIdx = i; sistemiKur(); } };
-            nav.appendChild(b);
+            const btn = document.createElement('button');
+            btn.className = `nav-btn ${i === mevcutIdx ? 'aktif' : ''}`;
+            btn.innerText = x.harf;
+            btn.onclick = () => { if(i <= acikIdx) { mevcutIdx = i; sistemiKur(); } };
+            nav.appendChild(btn);
         });
     }
 
-    function seviyeKontrol() {
-        if(document.querySelectorAll('.kart:not(.patla)').length === 0) {
-            document.getElementById('tebrik-ekrani').style.display = 'flex';
-            if(mevcutIdx === acikIdx && acikIdx < 7) acikIdx++;
-            
-            setTimeout(() => {
-                document.getElementById('tebrik-ekrani').style.display = 'none';
-                if(mevcutIdx < 7) { mevcutIdx++; sistemiKur(); }
-            }, 2000);
+    function oyunuBitir() {
+        const bitisEkrani = document.getElementById('bitis-ekrani');
+        bitisEkrani.style.display = 'flex';
+        for(let i=0; i<50; i++) {
+            const k = document.createElement('div');
+            k.className = 'konfeti';
+            k.style.left = Math.random() * 100 + '%';
+            k.style.animationDelay = Math.random() * 2 + 's';
+            k.style.backgroundColor = renkler[Math.floor(Math.random() * renkler.length)];
+            bitisEkrani.appendChild(k);
         }
+        fonMuzigi.volume = 0; 
+        sesCal('Kayıt (98)'); 
     }
+
+    window.onload = sistemiKur;
 </script>
 </body>
 </html>
