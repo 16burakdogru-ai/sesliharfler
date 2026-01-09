@@ -58,6 +58,7 @@
             font-family: 'Balsamiq Sans', cursive;
             min-width: 240px;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+            z-index: 1; /* Maymunun arkasında kalsın */
         }
 
         /* Maymun Karakter Yapısı */
@@ -67,70 +68,79 @@
             bottom: -20px;
             width: 100px;
             height: 120px;
-            z-index: 5;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .kafa { font-size: 75px; z-index: 10; position: relative; top: 15px; }
+        .kafa { font-size: 75px; z-index: 20; position: relative; top: 15px; }
         
         .vucut {
-            width: 65px; height: 55px;
+            width: 65px; height: 60px;
             background: var(--kahve);
             border-radius: 25px 25px 0 0;
             position: relative;
             top: -10px;
-            z-index: 5;
+            z-index: 15;
             box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
         }
 
-        /* OMUZ VE KOL MEKANİZMASI */
-        .kol-mekanizmasi {
+        /* --- EKLEMLİ KOL SİSTEMİ (DÜZELTİLMİŞ) --- */
+        .kol-sistemi {
             position: absolute;
-            top: 50px; /* Tam omuz hizası */
-            right: 18px; /* Vücudun sağ kenarı */
-            z-index: 20; 
-            transform-origin: 50% 5px; /* Dönüş noktası: Üst merkez (Omuz eklemi) */
-            animation: dersAnlatim 1.5s infinite ease-in-out alternate;
+            top: 55px; /* Vücudun omuz hizası */
+            right: 20px;
+            z-index: 25; /* Vücudun önünde */
         }
 
-        .kol {
-            width: 12px; height: 55px;
+        /* Üst Kol (Omuzdan Dirseğe) */
+        .ust-kol {
+            width: 14px; height: 45px;
+            background: var(--kahve);
+            border-radius: 10px;
+            transform-origin: top center; /* Omuz eklemi */
+            animation: omuzHareket 1.5s infinite ease-in-out alternate;
+            position: relative;
+        }
+
+        /* Ön Kol (Dirsekten Ele) */
+        .on-kol {
+            width: 12px; height: 40px;
             background: var(--kahve);
             border-radius: 10px;
             position: absolute;
-            top: 0; left: 0;
-            z-index: 2;
+            top: 38px; /* Üst kolun bittiği yer (Dirsek) */
+            left: 1px;
+            transform-origin: top center; /* Dirsek eklemi */
+            animation: dirsekHareket 1.5s infinite ease-in-out alternate;
         }
 
-        /* YENİ CETVEL TASARIMI (KISA VE ÇİZGİLİ) */
+        /* Cetvel (Ön kolun ucunda) */
         .cetvel {
             position: absolute;
-            width: 80px; /* Daha kısa */
+            width: 80px;
             height: 10px;
-            /* Cetvel Çizgileri İçin CSS Gradient */
-            background: repeating-linear-gradient(
-                90deg,
-                #d35400 0px,
-                #d35400 2px,
-                transparent 2px,
-                transparent 10px
-            ), #f1c40f; 
-            
+            background: repeating-linear-gradient(90deg, #d35400 0px, #d35400 2px, transparent 2px, transparent 10px), #f1c40f; 
             border: 1px solid #e67e22;
             bottom: -5px; 
-            left: -5px; 
+            left: -2px; 
             transform-origin: left center;
-            transform: rotate(-75deg);
+            transform: rotate(-90deg); /* Ele dik dursun */
             border-radius: 2px;
             z-index: 1;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        @keyframes dersAnlatim {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(25deg); }
+        /* ANİMASYONLAR */
+        @keyframes omuzHareket {
+            0% { transform: rotate(-10deg); } /* Kol hafif geride */
+            100% { transform: rotate(20deg); } /* Kol ileri gidiyor */
+        }
+
+        @keyframes dirsekHareket {
+            0% { transform: rotate(0deg); }   /* Dirsek düz */
+            100% { transform: rotate(-40deg); } /* Dirsek bükülerek vuruyor */
         }
 
         /* --- YAZI TİPİ --- */
@@ -291,7 +301,7 @@
 
 <div id="giris-ekrani">
     <div id="yagmur-alani">
-        <div class="yagan-obje" style="left:8%; animation-delay:0s;">🤡</div>
+        <div class="yagan-obje" style="left:8%; animation-delay:0s;">🧸</div>
         <div class="yagan-obje" style="left:25%; animation-delay:2s;">🦁</div>
         <div class="yagan-obje" style="left:45%; animation-delay:1s;">🦒</div>
         <div class="yagan-obje" style="left:65%; animation-delay:4s;">🐰</div>
@@ -307,9 +317,12 @@
         <div class="maymun-govde">
             <div class="kafa">🐵</div>
             <div class="vucut"></div>
-            <div class="kol-mekanizmasi">
-                <div class="kol"></div>
-                <div class="cetvel"></div>
+            <div class="kol-sistemi">
+                <div class="ust-kol">
+                    <div class="on-kol">
+                        <div class="cetvel"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -391,7 +404,7 @@
         const s = new Audio(encodeURI(`sesler/${dosya}.m4a`));
         aktifSesObjesi = s;
 
-        // TEBRİK SESİ (98) DAHİL SES YÜKSELTME
+        // SES YÜKSELTME: Konuşmalar (0-32) VE Bitiş Sesi (98)
         const dosyaNo = parseInt(dosya.replace('Kayıt (', '').replace(')', ''));
         const yukselt = (dosyaNo >= 0 && dosyaNo <= 32) || dosyaNo === 98;
 
@@ -545,10 +558,8 @@
             const btn = document.createElement('button');
             btn.className = `nav-btn ${i === mevcutIdx ? 'aktif' : ''}`;
             btn.innerText = x.harf;
-            // SERBEST DOLAŞIM ÖZELLİĞİ
             btn.onclick = () => { 
                 if(!tiklamaKilitli) { 
-                    // Bitiş ekranını kapat
                     document.getElementById('bitis-ekrani').style.display = 'none';
                     mevcutIdx = i; 
                     sistemiKur(); 
