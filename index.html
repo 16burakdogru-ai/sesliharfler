@@ -35,11 +35,63 @@
         .yagan-obje { position: absolute; font-size: 55px; top: -80px; animation: dusme 7s linear infinite; z-index: 1; opacity: 0.8; }
         @keyframes dusme { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(115vh) rotate(360deg); } }
 
+        /* YENİ: MAYMUN VE TAHTA TASARIMI */
+        .sahne-konteyner {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            transform: scale(1.2); /* Biraz büyük görünsün */
+        }
+
+        .tahta {
+            background-color: #2d3436;
+            border: 8px solid #d63031;
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-align: center;
+            font-family: 'Balsamiq Sans', cursive;
+            min-width: 220px;
+        }
+
+        .maymun-alani {
+            position: absolute;
+            right: -50px;
+            bottom: -10px;
+            font-size: 70px;
+            z-index: 5;
+        }
+
+        .cetvel {
+            position: absolute;
+            width: 80px;
+            height: 6px;
+            background: #fdcb6e;
+            top: 40px;
+            left: -30px;
+            border-radius: 5px;
+            transform-origin: right center;
+            animation: dersAnlatim 1.5s infinite ease-in-out;
+            border: 1px solid #e17055;
+        }
+
+        @keyframes dersAnlatim {
+            0% { transform: rotate(-10deg); }
+            50% { transform: rotate(15deg); }
+            100% { transform: rotate(-10deg); }
+        }
+
         .baslik-kapsayici { 
             text-align: center; background: rgba(255,255,255,0.92); 
-            padding: 30px 40px; border-radius: 40px; z-index: 2; 
+            padding: 20px 40px; border-radius: 40px; z-index: 2; 
             box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 4px solid white;
             width: 80%; max-width: 500px;
+            margin-top: 20px;
         }
         
         .ana-buton {
@@ -155,12 +207,13 @@
         @keyframes yagdir { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         
         @media (max-width: 600px) {
-            .baslik-kapsayici h1 { font-size: 40px; }
-            .baslik-kapsayici p { font-size: 20px; }
+            .baslik-kapsayici h1 { font-size: 30px; }
+            .baslik-kapsayici p { font-size: 18px; }
             .ana-buton { padding: 15px 40px; font-size: 24px; }
             #sahne-alani { width: 280px; height: 220px; }
             .harf-etiket { font-size: 140px; }
             .grid { gap: 15px; }
+            .sahne-konteyner { transform: scale(0.9); }
         }
     </style>
 </head>
@@ -175,8 +228,19 @@
         <div class="yagan-obje" style="left:82%; animation-delay:1.5s;">🐒</div>
         <div class="yagan-obje" style="left:93%; animation-delay:3s;">🐘</div>
     </div>
+    
+    <div class="sahne-konteyner">
+        <div class="tahta">
+            a e ı i<br>o ö u ü
+        </div>
+        <div class="maymun-alani">
+            🐵
+            <div class="cetvel"></div>
+        </div>
+    </div>
+
     <div class="baslik-kapsayici">
-        <h1 style="color:var(--ana); margin:0;">Sesli Harfleri Öğrenelim</h1>
+        <h1 style="color:var(--ana); margin:0; font-size: 40px;">Sesli Harfleri<br>Öğrenelim</h1>
         <p style="color:#2d3436; margin:10px 0 0 0; text-transform:none;">Burak Öğretmen ile Eğlence Zamanı! 🎨</p>
     </div>
     <button id="audio-init-btn" class="ana-buton" onclick="tanitimiBaslat()">Oynat 🔊</button>
@@ -226,17 +290,16 @@
     let mevcutIdx = 0, acikIdx = 0;
     let fonMuzigi = new Audio('sesler/Kayıt (99).m4a');
     fonMuzigi.loop = true;
-    fonMuzigi.volume = 0.005; // Normal ses seviyesi
+    fonMuzigi.volume = 0.005; 
 
     let aktifSesObjesi = null;
     let perdeAcikMi = false;
     let tiklamaKilitli = false;
 
-    // WEB AUDIO API İÇİN DEĞİŞKENLER (Ses Yükseltmek İçin)
+    // WEB AUDIO API
     let audioCtx = null;
     let audioInited = false;
 
-    // Sesi önceden yükle
     function sesiOnYukle(dosya) {
         const temp = new Audio(encodeURI(`sesler/${dosya}.m4a`));
         temp.preload = 'auto';
@@ -253,20 +316,30 @@
         const s = new Audio(encodeURI(`sesler/${dosya}.m4a`));
         aktifSesObjesi = s;
 
-        // EĞER SES DOSYASI KONUŞMA İSE (Kayıt 0 - 32 arası) SESİ YÜKSELT
-        // 98 ve 99 fon müziği ve alkış, onları yükseltmiyoruz.
+        // SES YÜKSELTME VE SIKIŞTIRMA (COMPRESSOR)
         const dosyaNo = parseInt(dosya.replace('Kayıt (', '').replace(')', ''));
         const yukselt = (dosyaNo >= 0 && dosyaNo <= 32);
 
         if (yukselt && audioInited && audioCtx) {
-            // Dijital Yükseltici Kullan
             const source = audioCtx.createMediaElementSource(s);
             const gainNode = audioCtx.createGain();
-            gainNode.gain.value = 3.0; // SESİ 3 KATINA ÇIKAR!
+            const compressor = audioCtx.createDynamicsCompressor();
+
+            // 1. Sesi çok yükselt
+            gainNode.gain.value = 10.0; // 10 KAT YÜKSELT!
+
+            // 2. Patlamaları engelle (Compressor)
+            compressor.threshold.value = -24;
+            compressor.knee.value = 30;
+            compressor.ratio.value = 12;
+            compressor.attack.value = 0.003;
+            compressor.release.value = 0.25;
+
+            // Bağlantı Zinciri: Kaynak -> Gain -> Compressor -> Hoparlör
             source.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
+            gainNode.connect(compressor);
+            compressor.connect(audioCtx.destination);
         } else {
-            // Normal çal
             s.volume = 1.0; 
         }
 
@@ -288,13 +361,11 @@
     }
 
     function tanitimiBaslat() {
-        // Audio Context'i başlat (Tarayıcı izni için tıklama anında yapılmalı)
         if (!audioCtx) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             audioCtx = new AudioContext();
             audioInited = true;
         }
-        // Eğer duraklatılmışsa devam ettir
         if (audioCtx.state === 'suspended') {
             audioCtx.resume();
         }
@@ -413,7 +484,6 @@
         const bitisEkrani = document.getElementById('bitis-ekrani');
         bitisEkrani.style.display = 'flex';
         
-        // Önceki konfetileri temizle
         const eskiKonfetiler = document.querySelectorAll('.konfeti');
         eskiKonfetiler.forEach(k => k.remove());
 
@@ -429,20 +499,12 @@
         sesCal('Kayıt (98)'); 
     }
 
-    // OYUNU SIFIRLAMA VE YENİDEN BAŞLATMA
     function oyunuYenidenBaslat() {
-        // Bitiş ekranını gizle
         document.getElementById('bitis-ekrani').style.display = 'none';
-        
-        // Değişkenleri sıfırla
         mevcutIdx = 0;
         acikIdx = 0; 
         tiklamaKilitli = false;
-
-        // Sahneyi kur
         sistemiKur();
-
-        // Müziği tekrar başlat (düşük sesle)
         fonMuzigi.volume = 0.005;
         fonMuzigi.currentTime = 0;
         fonMuzigi.play();
@@ -452,5 +514,3 @@
 </script>
 </body>
 </html>
-
-
