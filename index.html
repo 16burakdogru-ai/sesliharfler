@@ -6,7 +6,7 @@
     <title>Sesli Harfleri Öğrenelim - Burak Öğretmen</title>
     <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; }
+        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; --kahve: #8d5524; }
         
         /* İMLEÇ AYARI */
         * { cursor: pointer !important; -webkit-tap-highlight-color: transparent; }
@@ -35,70 +35,135 @@
         .yagan-obje { position: absolute; font-size: 55px; top: -80px; animation: dusme 7s linear infinite; z-index: 1; opacity: 0.8; }
         @keyframes dusme { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(115vh) rotate(360deg); } }
 
-        /* YENİ: MAYMUN VE TAHTA TASARIMI */
+        /* --- YENİ SAHNE TASARIMI --- */
         .sahne-konteyner {
             position: relative;
             display: flex;
             align-items: flex-end;
-            margin-bottom: 20px;
-            transform: scale(1.2); /* Biraz büyük görünsün */
+            margin-bottom: 30px;
+            transform: scale(1.1); 
         }
 
         .tahta {
-            background-color: #2d3436;
-            border: 8px solid #d63031;
-            border-radius: 15px;
-            padding: 15px 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            color: white;
-            font-size: 32px;
+            background-color: #2f3640; /* Kara tahta rengi */
+            border: 10px solid #d35400; /* Ahşap çerçeve */
+            border-radius: 10px;
+            padding: 20px 30px;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.25);
+            color: #f5f6fa;
+            font-size: 38px;
             font-weight: bold;
-            letter-spacing: 3px;
+            letter-spacing: 5px;
             text-align: center;
             font-family: 'Balsamiq Sans', cursive;
-            min-width: 220px;
+            min-width: 240px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
         }
 
-        .maymun-alani {
+        /* Maymun Karakter Yapısı */
+        .maymun-govde {
             position: absolute;
-            right: -50px;
-            bottom: -10px;
-            font-size: 70px;
+            right: -60px;
+            bottom: -20px;
+            width: 100px;
+            height: 120px;
             z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .kafa { font-size: 75px; z-index: 10; position: relative; top: 10px; }
+        
+        .vucut {
+            width: 60px; height: 50px;
+            background: var(--kahve);
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            top: -15px;
+            z-index: 5;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Hareketli Kol ve Cetvel */
+        .kol-mekanizmasi {
+            position: absolute;
+            top: 55px; /* Omuz hizası */
+            right: 15px;
+            width: 10px; height: 10px;
+            z-index: 8;
+            transform-origin: top center; /* Omuzdan dön */
+            animation: dersAnlatim 1.8s infinite ease-in-out;
+        }
+
+        .kol {
+            width: 12px; height: 50px;
+            background: var(--kahve);
+            border-radius: 10px;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .el {
+            font-size: 24px;
+            position: absolute;
+            bottom: -15px; left: -8px;
+            transform: rotate(-90deg); /* Eli düzelt */
         }
 
         .cetvel {
             position: absolute;
-            width: 80px;
-            height: 6px;
-            background: #fdcb6e;
-            top: 40px;
-            left: -30px;
-            border-radius: 5px;
-            transform-origin: right center;
-            animation: dersAnlatim 1.5s infinite ease-in-out;
-            border: 1px solid #e17055;
+            width: 100px; height: 8px;
+            background: #f1c40f;
+            border: 1px solid #e67e22;
+            bottom: -10px; left: -10px;
+            transform-origin: left center;
+            transform: rotate(-70deg); /* Cetvel açısı */
+            border-radius: 4px;
         }
 
         @keyframes dersAnlatim {
-            0% { transform: rotate(-10deg); }
-            50% { transform: rotate(15deg); }
-            100% { transform: rotate(-10deg); }
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(35deg); } /* Kolu kaldır */
+            100% { transform: rotate(0deg); }
         }
 
+        /* --- YAZI TİPİ DÜZELTMELERİ --- */
         .baslik-kapsayici { 
-            text-align: center; background: rgba(255,255,255,0.92); 
-            padding: 20px 40px; border-radius: 40px; z-index: 2; 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15); border: 4px solid white;
-            width: 80%; max-width: 500px;
-            margin-top: 20px;
+            text-align: center; 
+            background: rgba(255,255,255,0.95); 
+            padding: 25px 50px; 
+            border-radius: 50px; 
+            z-index: 2; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 -5px 0 rgba(0,0,0,0.05); 
+            border: 6px solid #fff;
+            width: 85%; max-width: 550px;
+            margin-top: 10px;
+        }
+        
+        .baslik-kapsayici h1 {
+            color: var(--ana);
+            margin: 0;
+            font-size: 48px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        .baslik-kapsayici p {
+            color: #636e72;
+            margin: 15px 0 0 0;
+            font-size: 22px;
+            text-transform: none;
+            font-weight: bold;
         }
         
         .ana-buton {
-            padding: 20px 50px; font-size: 28px; font-weight: bold; font-family: 'Balsamiq Sans', sans-serif;
+            padding: 20px 60px; font-size: 32px; font-weight: bold; font-family: 'Balsamiq Sans', sans-serif;
             background: #fdcb6e; color: #2d3436; border: none;
             border-radius: 100px; box-shadow: 0 10px 0 #e17055;
-            z-index: 10; margin-top: 30px; transition: 0.2s;
+            z-index: 10; margin-top: 35px; transition: 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
         }
         .ana-buton:active { transform: translateY(6px); box-shadow: 0 4px 0 #e17055; }
 
@@ -207,13 +272,13 @@
         @keyframes yagdir { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
         
         @media (max-width: 600px) {
-            .baslik-kapsayici h1 { font-size: 30px; }
+            .baslik-kapsayici h1 { font-size: 32px; }
             .baslik-kapsayici p { font-size: 18px; }
             .ana-buton { padding: 15px 40px; font-size: 24px; }
             #sahne-alani { width: 280px; height: 220px; }
             .harf-etiket { font-size: 140px; }
             .grid { gap: 15px; }
-            .sahne-konteyner { transform: scale(0.9); }
+            .sahne-konteyner { transform: scale(0.85); }
         }
     </style>
 </head>
@@ -231,17 +296,23 @@
     
     <div class="sahne-konteyner">
         <div class="tahta">
-            a e ı i<br>o ö u ü
+            A E I İ<br>O Ö U Ü
         </div>
-        <div class="maymun-alani">
-            🐵
-            <div class="cetvel"></div>
+        
+        <div class="maymun-govde">
+            <div class="kafa">🐵</div>
+            <div class="vucut"></div>
+            <div class="kol-mekanizmasi">
+                <div class="kol"></div>
+                <div class="el">✊</div>
+                <div class="cetvel"></div>
+            </div>
         </div>
     </div>
 
     <div class="baslik-kapsayici">
-        <h1 style="color:var(--ana); margin:0; font-size: 40px;">Sesli Harfleri<br>Öğrenelim</h1>
-        <p style="color:#2d3436; margin:10px 0 0 0; text-transform:none;">Burak Öğretmen ile Eğlence Zamanı! 🎨</p>
+        <h1>Sesli Harfleri<br>Öğrenelim</h1>
+        <p>Burak Öğretmen ile Eğlence Zamanı! 🎨</p>
     </div>
     <button id="audio-init-btn" class="ana-buton" onclick="tanitimiBaslat()">Oynat 🔊</button>
     <button id="start-game-btn" class="ana-buton" style="display:none; background:var(--iyi); box-shadow: 0 10px 0 #218c74;" onclick="oyunuBaslat()">Hadi Başlayalım ▶️</button>
@@ -325,17 +396,16 @@
             const gainNode = audioCtx.createGain();
             const compressor = audioCtx.createDynamicsCompressor();
 
-            // 1. Sesi çok yükselt
-            gainNode.gain.value = 10.0; // 10 KAT YÜKSELT!
+            // Sesi yükselt
+            gainNode.gain.value = 10.0; 
 
-            // 2. Patlamaları engelle (Compressor)
+            // Patlamaları engelle (Compressor)
             compressor.threshold.value = -24;
             compressor.knee.value = 30;
             compressor.ratio.value = 12;
             compressor.attack.value = 0.003;
             compressor.release.value = 0.25;
 
-            // Bağlantı Zinciri: Kaynak -> Gain -> Compressor -> Hoparlör
             source.connect(gainNode);
             gainNode.connect(compressor);
             compressor.connect(audioCtx.destination);
