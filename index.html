@@ -50,13 +50,25 @@
         }
         .ana-buton:active { transform: translateY(6px); box-shadow: 0 4px 0 #e17055; }
 
+        /* OYUN ALANI DÜZENLEMESİ (YUKARI TAŞINDI) */
+        #oyun-alani { 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; /* Ortalamak yerine baştan başlat */
+            padding-top: 40px; /* Yukarıdan boşluk */
+        }
+
         /* SAHNE */
         #sahne-alani {
             position: relative; width: 320px; height: 250px;
             background: #1e272e; border: 10px solid #57606f;
-            border-radius: 30px; overflow: hidden; margin-bottom: 30px;
+            border-radius: 30px; overflow: hidden; 
+            margin-bottom: 20px; /* Boşluk azaltıldı */
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
         .perde {
@@ -96,12 +108,25 @@
             color: white; box-shadow: inset -8px -8px 15px rgba(0,0,0,0.15);
             animation: salinim 3s infinite ease-in-out;
             position: relative; 
+            transition: transform 0.3s;
         }
         @keyframes salinim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .kart-ikon { font-size: 60px; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; }
         .kart-ikon svg { width: 55px; height: 55px; filter: drop-shadow(0 3px 3px rgba(0,0,0,0.2)); }
         .kart-metin { font-size: 22px; font-weight: 700; text-transform: lowercase; }
+
+        /* YENİ: DİNLENİYOR MODU (SES ÇALARKEN) */
+        .dinleniyor {
+            animation: yukselVeYanSon 1s infinite alternate ease-in-out !important;
+            z-index: 100;
+            border: 4px solid rgba(255,255,255,0.8);
+            box-shadow: 0 0 20px rgba(255,255,255,0.6);
+        }
+        @keyframes yukselVeYanSon {
+            0% { transform: translateY(-20px) scale(1.1); filter: brightness(1.1); }
+            100% { transform: translateY(-35px) scale(1.15); filter: brightness(1.3); }
+        }
 
         .patla { animation: patlaAnim 0.3s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
         @keyframes patlaAnim {
@@ -110,8 +135,6 @@
             100% { transform: scale(0); opacity: 0; }
         }
 
-        #oyun-alani { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
         .tanitim-bandi { 
             position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.75); 
             color: white; padding: 15px 0; overflow: hidden; white-space: nowrap; 
@@ -200,13 +223,15 @@
     ];
 
     let mevcutIdx = 0, acikIdx = 0;
-    // DÜZELTME: Sesi burada 0.005'e ayarlıyoruz.
     let fonMuzigi = new Audio('sesler/Kayıt (99).m4a');
     fonMuzigi.loop = true;
-    fonMuzigi.volume = 0.005; // Başlangıçta kısık
+    fonMuzigi.volume = 0.005;
 
     let aktifSesObjesi = null;
     let perdeAcikMi = false;
+    
+    // YENİ: Tıklama Kilidi
+    let tiklamaKilitli = false;
 
     // Sesi önceden yükle
     function sesiOnYukle(dosya) {
@@ -249,7 +274,6 @@
         sesiOnYukle('Kayıt (1)');
         sesiOnYukle('Kayıt (2)');
         
-        // DÜZELTME: Oynat'a basınca tekrar garantiye alıyoruz
         fonMuzigi.volume = 0.005; 
         fonMuzigi.play().catch(e => console.log("Fon müziği hatası"));
         
@@ -264,7 +288,11 @@
     }
 
     function sahneTiklama() {
+        // Kilitli ise işlem yapma
+        if(tiklamaKilitli) return;
+
         if (!perdeAcikMi) {
+            tiklamaKilitli = true; // KİLİTLE
             const ipucu = document.getElementById('sahneIpucu');
             if(ipucu) ipucu.style.display = 'none';
 
@@ -275,10 +303,15 @@
             setTimeout(() => {
                 sesCal(veriler[mevcutIdx].ses, () => {
                     document.getElementById('izgara').classList.add('aktif');
+                    tiklamaKilitli = false; // KİLİDİ AÇ
                 });
             }, 300);
         } else {
-            sesCal(veriler[mevcutIdx].ses);
+            // Perde açıksa sadece sesi tekrarla ama kilitle
+            tiklamaKilitli = true;
+            sesCal(veriler[mevcutIdx].ses, () => {
+                tiklamaKilitli = false;
+            });
         }
     }
 
@@ -292,6 +325,7 @@
         document.getElementById('izgara').classList.remove('aktif');
         document.getElementById('sahneIpucu').style.display = 'block';
         perdeAcikMi = false;
+        tiklamaKilitli = false;
         
         const izgara = document.getElementById('izgara');
         izgara.innerHTML = '';
@@ -300,17 +334,28 @@
             const b = document.createElement('div');
             b.className = 'balon';
             b.style.backgroundColor = renkler[i % renkler.length];
-            b.style.animationDelay = `${i * 0.2}s`;
+            b.style.animationDelay = `${i * 0.15}s`;
             const ikonIcerik = n.i.includes('<svg') ? n.i : `<div class="kart-ikon">${n.i}</div>`;
             b.innerHTML = `${ikonIcerik}<div class="kart-metin">${n.n}</div>`;
             
             b.onclick = function() {
-                if (this.classList.contains('patla')) return;
-                this.classList.add('patla');
-                this.style.pointerEvents = 'none'; 
+                // Kilit kontrolü
+                if (tiklamaKilitli || this.classList.contains('patla')) return;
 
+                // 1. Kilitle
+                tiklamaKilitli = true;
+
+                // 2. Dinleniyor Efekti (Yukarı süzül ve yan)
+                this.classList.add('dinleniyor');
+
+                // 3. Sesi Çal
                 sesCal(n.s, () => {
+                    // Ses bittiğinde burası çalışır:
+                    this.classList.remove('dinleniyor');
+                    this.classList.add('patla'); // Şimdi patlat
+                    
                     setTimeout(() => {
+                        // Eğer patlamamış balon kalmadıysa
                         if(document.querySelectorAll('.balon:not(.patla)').length === 0) {
                             if(mevcutIdx === acikIdx && acikIdx < 7) { acikIdx++; }
                             setTimeout(() => { 
@@ -318,7 +363,12 @@
                                 else if(mevcutIdx < 7) { mevcutIdx++; sistemiKur(); } 
                             }, 1000);
                         }
-                    }, 100);
+                        
+                        // Sahne değişmeyecekse kilidi aç
+                        if(document.querySelectorAll('.balon:not(.patla)').length > 0) {
+                             tiklamaKilitli = false;
+                        }
+                    }, 300);
                 });
             };
             izgara.appendChild(b);
@@ -330,7 +380,11 @@
             const btn = document.createElement('button');
             btn.className = `nav-btn ${i === mevcutIdx ? 'aktif' : ''}`;
             btn.innerText = x.harf;
-            btn.onclick = () => { if(i <= acikIdx) { mevcutIdx = i; sistemiKur(); } };
+            btn.onclick = () => { 
+                if(!tiklamaKilitli && i <= acikIdx) { 
+                    mevcutIdx = i; sistemiKur(); 
+                } 
+            };
             nav.appendChild(btn);
         });
     }
