@@ -85,50 +85,44 @@
             box-shadow: inset 0 5px 10px rgba(0,0,0,0.2);
         }
 
-        /* Hareketli Kol ve Cetvel - DÜZELTİLDİ */
+        /* YENİ HAREKETLİ KOL VE CETVEL MEKANİZMASI */
         .kol-mekanizmasi {
             position: absolute;
-            top: 55px;
+            top: 55px; /* Omuz hizası */
             right: 15px;
-            width: 10px; height: 10px;
             z-index: 20; /* Vücudun en önünde */
-            transform-origin: top center;
-            animation: dersAnlatim 1.8s infinite ease-in-out;
+            transform-origin: top center; /* Dönüş noktası omuz */
+            animation: dersAnlatim 1.5s infinite ease-in-out alternate; /* Git-gel animasyon */
         }
 
+        /* Tek parça kol */
         .kol {
-            width: 14px; height: 50px;
+            width: 14px; height: 60px;
             background: var(--kahve);
             border-radius: 10px;
             position: absolute;
-            top: 0; left: 0;
+            top: 0; left: -7px; /* Merkeze hizala */
             z-index: 2;
         }
 
-        .el {
-            font-size: 28px;
-            position: absolute;
-            bottom: -20px; left: -12px;
-            transform: rotate(-90deg);
-            z-index: 3; /* Cetvelin üzerinde */
-        }
-
+        /* CETVEL DOĞRUDAN KOLA BAĞLI */
         .cetvel {
             position: absolute;
-            width: 110px; height: 8px;
+            width: 120px; height: 8px;
             background: #f1c40f;
             border: 1px solid #e67e22;
-            bottom: -15px; left: -10px;
+            bottom: -5px; 
+            left: 0px; 
             transform-origin: left center;
-            transform: rotate(-70deg);
+            transform: rotate(-80deg);
             border-radius: 4px;
-            z-index: 1; /* Elin altında */
+            z-index: 1;
         }
 
+        /* Yeni Animasyon: Tahtaya doğru sallama */
         @keyframes dersAnlatim {
             0% { transform: rotate(0deg); }
-            50% { transform: rotate(35deg); }
-            100% { transform: rotate(0deg); }
+            100% { transform: rotate(30deg); }
         }
 
         /* --- YAZI TİPİ DÜZELTMELERİ --- */
@@ -307,7 +301,6 @@
             <div class="vucut"></div>
             <div class="kol-mekanizmasi">
                 <div class="kol"></div>
-                <div class="el">✊</div>
                 <div class="cetvel"></div>
             </div>
         </div>
@@ -364,7 +357,7 @@
     let mevcutIdx = 0, acikIdx = 0;
     let fonMuzigi = new Audio('sesler/Kayıt (99).m4a');
     fonMuzigi.loop = true;
-    fonMuzigi.volume = 0.01; // SES 2 KATINA ÇIKARILDI (0.005 -> 0.01)
+    fonMuzigi.volume = 0.01; 
 
     let aktifSesObjesi = null;
     let perdeAcikMi = false;
@@ -544,9 +537,15 @@
             const btn = document.createElement('button');
             btn.className = `nav-btn ${i === mevcutIdx ? 'aktif' : ''}`;
             btn.innerText = x.harf;
+            // NAVİGASYON KİLİDİ KALDIRILDI: Sadece ses çalmıyorsa geçiş serbest
             btn.onclick = () => { 
-                if(!tiklamaKilitli && i <= acikIdx) { 
-                    mevcutIdx = i; sistemiKur(); 
+                if(!tiklamaKilitli) { 
+                    // Eğer bitiş ekranındaysa gizle
+                    document.getElementById('bitis-ekrani').style.display = 'none';
+                    mevcutIdx = i; 
+                    sistemiKur(); 
+                    // Fon müziği durmuşsa başlat (örn: bitiş ekranından dönüşte)
+                    if(fonMuzigi.paused) fonMuzigi.play();
                 } 
             };
             nav.appendChild(btn);
