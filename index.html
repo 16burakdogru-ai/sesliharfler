@@ -31,17 +31,15 @@
 
         #bitis-ekrani { display: none; z-index: 2000; background: linear-gradient(135deg, #00b894, #0984e3); }
 
-        /* ESKİ YAĞMUR ALANI KALDIRILDI, YERİNE KAR EFEKTİ GELDİ */
-
         /* --- SAHNE TASARIMI (KARLI VE BAYKUŞLU) --- */
         .sahne-konteyner {
             position: relative;
             display: flex;
             justify-content: center; 
             margin-bottom: 30px;
-            transform: scale(1.1); 
-            padding-top: 40px;
-            /* Karın dışarı taşmaması için */
+            transform: scale(1.1);
+            /* DÜZELTME 1: Üst boşluk artırıldı ki baykuşlar sığsın */
+            padding-top: 95px; 
             overflow: hidden; 
             padding-bottom: 20px;
             border-radius: 20px;
@@ -52,7 +50,7 @@
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 15; /* Baykuşların önünde yağsın */
+            z-index: 15;
         }
         .kar-tanesi {
             position: absolute;
@@ -63,7 +61,7 @@
             top: -10px;
         }
         @keyframes karYagisi {
-            to { transform: translateY(300px); } /* Aşağı düşüş */
+            to { transform: translateY(350px); } 
         }
 
         .tahta {
@@ -87,7 +85,8 @@
         /* --- KIŞLIK GİYİMLİ BAYKUŞLAR --- */
         .baykus-komple {
             position: absolute;
-            top: -30px;
+            /* Tahtanın tam üst sınırına oturttuk */
+            top: -45px; 
             z-index: 10;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
             animation: kafaSalla 3s infinite ease-in-out alternate;
@@ -97,31 +96,33 @@
 
         .baykus-emoji { font-size: 65px; position: relative; z-index: 2; }
 
-        /* BERE (ŞAPKA) */
+        /* BERE (ŞAPKA) - DÜZELTİLDİ */
         .bere {
             position: absolute;
-            width: 40px; height: 25px;
+            width: 38px; height: 24px;
             background: var(--kis-kirmizi);
             border-radius: 20px 20px 5px 5px;
-            top: 2px; left: 12px;
+            /* Kafaya tam oturtuldu */
+            top: 5px; left: 13px; 
             z-index: 3;
         }
         /* Berenin ponponu */
         .bere::after {
-            content: ''; position: absolute; top: -8px; left: 15px;
+            content: ''; position: absolute; top: -8px; left: 14px;
             width: 10px; height: 10px; background: white; border-radius: 50%;
         }
 
-        /* ATKI */
+        /* ATKI - DÜZELTİLDİ */
         .atki {
             position: absolute;
-            width: 50px; height: 12px;
-            /* Kırmızı-Beyaz Çizgili Atkı Deseni */
+            /* Genişlik artırıldı ve boyuna tam oturtuldu */
+            width: 54px; height: 14px;
             background: repeating-linear-gradient(45deg, var(--kis-kirmizi), var(--kis-kirmizi) 5px, white 5px, white 10px);
-            border-radius: 5px;
-            top: 45px; left: 7px;
+            border-radius: 8px;
+            /* Boyun hizasına çekildi */
+            top: 42px; left: 6px; 
             z-index: 3;
-            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
         }
 
         @keyframes kafaSalla {
@@ -286,6 +287,7 @@
 <body>
 
 <div id="giris-ekrani">
+    
     <div class="sahne-konteyner" id="kisSahnesi">
         <div class="kar-alani" id="karAlani"></div>
 
