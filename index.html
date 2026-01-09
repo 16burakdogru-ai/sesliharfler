@@ -6,7 +6,7 @@
     <title>Sesli Harfleri Öğrenelim - Burak Öğretmen</title>
     <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; --kahve: #8d5524; }
+        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; --kahve: #8d5524; --kis-kirmizi: #e84118; }
         
         /* İMLEÇ AYARI */
         * { cursor: pointer !important; -webkit-tap-highlight-color: transparent; }
@@ -31,19 +31,39 @@
 
         #bitis-ekrani { display: none; z-index: 2000; background: linear-gradient(135deg, #00b894, #0984e3); }
 
-        #yagmur-alani { position: absolute; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
-        .yagan-obje { position: absolute; font-size: 55px; top: -80px; animation: dusme 7s linear infinite; z-index: 1; opacity: 0.8; }
-        @keyframes dusme { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(115vh) rotate(360deg); } }
+        /* ESKİ YAĞMUR ALANI KALDIRILDI, YERİNE KAR EFEKTİ GELDİ */
 
-        /* --- SAHNE TASARIMI (BAYKUŞLU) --- */
+        /* --- SAHNE TASARIMI (KARLI VE BAYKUŞLU) --- */
         .sahne-konteyner {
             position: relative;
-            /* Maymun gidince hizalamayı merkeze aldık */
             display: flex;
             justify-content: center; 
             margin-bottom: 30px;
             transform: scale(1.1); 
-            padding-top: 30px; /* Baykuşlar için üstten yer açtık */
+            padding-top: 40px;
+            /* Karın dışarı taşmaması için */
+            overflow: hidden; 
+            padding-bottom: 20px;
+            border-radius: 20px;
+        }
+
+        /* KAR EFEKTİ ALANI */
+        .kar-alani {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 15; /* Baykuşların önünde yağsın */
+        }
+        .kar-tanesi {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: karYagisi linear infinite;
+            top: -10px;
+        }
+        @keyframes karYagisi {
+            to { transform: translateY(300px); } /* Aşağı düşüş */
         }
 
         .tahta {
@@ -64,30 +84,49 @@
             z-index: 1; 
         }
 
-        /* YENİ BAYKUŞLAR */
-        .baykus {
+        /* --- KIŞLIK GİYİMLİ BAYKUŞLAR --- */
+        .baykus-komple {
             position: absolute;
-            font-size: 60px; /* Sevimli boyut */
-            top: -35px; /* Tahtanın üstüne oturt */
-            z-index: 10; /* Tahtanın önünde */
-            animation: kafaSalla 3s infinite ease-in-out alternate;
+            top: -30px;
+            z-index: 10;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            animation: kafaSalla 3s infinite ease-in-out alternate;
+        }
+        .baykus-sol { left: -25px; transform-origin: bottom center; }
+        .baykus-sag { right: -25px; transform-origin: bottom center; animation-delay: 0.5s; }
+
+        .baykus-emoji { font-size: 65px; position: relative; z-index: 2; }
+
+        /* BERE (ŞAPKA) */
+        .bere {
+            position: absolute;
+            width: 40px; height: 25px;
+            background: var(--kis-kirmizi);
+            border-radius: 20px 20px 5px 5px;
+            top: 2px; left: 12px;
+            z-index: 3;
+        }
+        /* Berenin ponponu */
+        .bere::after {
+            content: ''; position: absolute; top: -8px; left: 15px;
+            width: 10px; height: 10px; background: white; border-radius: 50%;
         }
 
-        .baykus-sol {
-            left: -20px;
-            transform-origin: bottom center;
-        }
-
-        .baykus-sag {
-            right: -20px;
-            transform-origin: bottom center;
-            animation-delay: 0.5s; /* Diğeriyle aynı anda sallanmasın */
+        /* ATKI */
+        .atki {
+            position: absolute;
+            width: 50px; height: 12px;
+            /* Kırmızı-Beyaz Çizgili Atkı Deseni */
+            background: repeating-linear-gradient(45deg, var(--kis-kirmizi), var(--kis-kirmizi) 5px, white 5px, white 10px);
+            border-radius: 5px;
+            top: 45px; left: 7px;
+            z-index: 3;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
         }
 
         @keyframes kafaSalla {
-            0% { transform: rotate(-12deg); }
-            100% { transform: rotate(12deg); }
+            0% { transform: rotate(-10deg); }
+            100% { transform: rotate(10deg); }
         }
 
         /* --- YAZI TİPİ --- */
@@ -247,21 +286,24 @@
 <body>
 
 <div id="giris-ekrani">
-    <div id="yagmur-alani">
-        <div class="yagan-obje" style="left:8%; animation-delay:0s;">🧸</div>
-        <div class="yagan-obje" style="left:25%; animation-delay:2s;">🦁</div>
-        <div class="yagan-obje" style="left:45%; animation-delay:1s;">🦒</div>
-        <div class="yagan-obje" style="left:65%; animation-delay:4s;">🐰</div>
-        <div class="yagan-obje" style="left:82%; animation-delay:1.5s;">🐒</div>
-        <div class="yagan-obje" style="left:93%; animation-delay:3s;">🐘</div>
-    </div>
-    
-    <div class="sahne-konteyner">
-        <div class="baykus baykus-sol">🦉</div>
+    <div class="sahne-konteyner" id="kisSahnesi">
+        <div class="kar-alani" id="karAlani"></div>
+
+        <div class="baykus-komple baykus-sol">
+            <div class="bere"></div>
+            <div class="atki"></div>
+            <div class="baykus-emoji">🦉</div>
+        </div>
+
         <div class="tahta">
             a e ı i<br>o ö u ü
         </div>
-        <div class="baykus baykus-sag">🦉</div>
+        
+        <div class="baykus-komple baykus-sag">
+            <div class="bere"></div>
+            <div class="atki"></div>
+            <div class="baykus-emoji">🦉</div>
+        </div>
     </div>
 
     <div class="baslik-kapsayici">
@@ -384,6 +426,21 @@
         return s;
     }
 
+    // KAR YAĞDIRMA FONKSİYONU
+    function karYagdir() {
+        const karAlani = document.getElementById('karAlani');
+        for (let i = 0; i < 30; i++) { // 30 adet kar tanesi
+            const kar = document.createElement('div');
+            kar.className = 'kar-tanesi';
+            // Rastgele konum, boyut ve hız
+            kar.style.left = Math.random() * 100 + '%';
+            kar.style.width = kar.style.height = (Math.random() * 8 + 4) + 'px';
+            kar.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            kar.style.animationDelay = Math.random() * 2 + 's';
+            karAlani.appendChild(kar);
+        }
+    }
+
     function tanitimiBaslat() {
         if (!audioCtx) {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -408,8 +465,10 @@
     }
 
     function oyunuBaslat() { 
+        // Giriş ekranını yukarı kaydır
         document.getElementById('giris-ekrani').style.transform = 'translateY(-100%)'; 
-        setTimeout(() => { document.getElementById('yagmur-alani').style.display = 'none'; }, 800);
+        // Kar yağışını durdur (performans için)
+        setTimeout(() => { document.getElementById('kisSahnesi').style.display = 'none'; }, 800);
     }
 
     function sahneTiklama() {
@@ -537,7 +596,10 @@
         fonMuzigi.play();
     }
 
-    window.onload = sistemiKur;
+    window.onload = function() {
+        sistemiKur();
+        karYagdir(); // Sayfa yüklenince kar başlasın
+    };
 </script>
 </body>
 </html>
