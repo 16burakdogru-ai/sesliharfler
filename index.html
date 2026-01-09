@@ -6,7 +6,7 @@
     <title>Sesli Harfleri Öğrenelim - Burak Öğretmen</title>
     <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; --kahve: #8d5524; --kis-kirmizi: #e84118; }
+        :root { --ana: #ff7675; --iyi: #55efc4; --bg: #f0f3f7; --koyu: #2d3436; --kirmizi: #e84118; }
         
         /* İMLEÇ AYARI */
         * { cursor: pointer !important; -webkit-tap-highlight-color: transparent; }
@@ -31,26 +31,24 @@
 
         #bitis-ekrani { display: none; z-index: 2000; background: linear-gradient(135deg, #00b894, #0984e3); }
 
-        /* --- SAHNE TASARIMI (KARLI VE BAYKUŞLU) --- */
+        /* --- SAHNE TASARIMI --- */
         .sahne-konteyner {
             position: relative;
             display: flex;
             justify-content: center; 
             margin-bottom: 30px;
             transform: scale(1.1);
-            /* DÜZELTME 1: Üst boşluk artırıldı ki baykuşlar sığsın */
-            padding-top: 95px; 
-            overflow: hidden; 
+            padding-top: 40px; /* Süsler için yer */
+            overflow: visible; 
             padding-bottom: 20px;
-            border-radius: 20px;
         }
 
         /* KAR EFEKTİ ALANI */
         .kar-alani {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: -100px; left: -50%; width: 200%; height: 150%;
             pointer-events: none;
-            z-index: 15;
+            z-index: 0;
         }
         .kar-tanesi {
             position: absolute;
@@ -61,14 +59,14 @@
             top: -10px;
         }
         @keyframes karYagisi {
-            to { transform: translateY(350px); } 
+            to { transform: translateY(600px); } 
         }
 
         .tahta {
             background-color: #2f3640;
             border: 10px solid #d35400;
             border-radius: 10px;
-            padding: 20px 30px;
+            padding: 30px 40px;
             box-shadow: 0 15px 25px rgba(0,0,0,0.25);
             color: #f5f6fa;
             font-size: 38px;
@@ -76,58 +74,58 @@
             letter-spacing: 5px;
             text-align: center;
             font-family: 'Balsamiq Sans', cursive;
-            min-width: 240px;
+            min-width: 260px;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
             position: relative;
-            z-index: 1; 
+            z-index: 2; 
         }
 
-        /* --- KIŞLIK GİYİMLİ BAYKUŞLAR --- */
-        .baykus-komple {
+        /* --- SÜSLER (BAYRAKLAR) --- */
+        .sus-ipi {
             position: absolute;
-            /* Tahtanın tam üst sınırına oturttuk */
-            top: -45px; 
+            top: 2px; /* Tahtanın üstüne denk gelecek şekilde */
+            left: -15px; 
+            width: calc(100% + 30px);
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
             z-index: 10;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
-            animation: kafaSalla 3s infinite ease-in-out alternate;
         }
-        .baykus-sol { left: -25px; transform-origin: bottom center; }
-        .baykus-sag { right: -25px; transform-origin: bottom center; animation-delay: 0.5s; }
 
-        .baykus-emoji { font-size: 65px; position: relative; z-index: 2; }
-
-        /* BERE (ŞAPKA) - DÜZELTİLDİ */
-        .bere {
+        /* İp Görünümü */
+        .sus-ipi::before {
+            content: '';
             position: absolute;
-            width: 38px; height: 24px;
-            background: var(--kis-kirmizi);
-            border-radius: 20px 20px 5px 5px;
-            /* Kafaya tam oturtuldu */
-            top: 5px; left: 13px; 
-            z-index: 3;
-        }
-        /* Berenin ponponu */
-        .bere::after {
-            content: ''; position: absolute; top: -8px; left: 14px;
-            width: 10px; height: 10px; background: white; border-radius: 50%;
+            top: 0; left: 0; width: 100%;
+            height: 15px;
+            border-top: 3px solid rgba(255,255,255,0.9);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0; 
         }
 
-        /* ATKI - DÜZELTİLDİ */
-        .atki {
-            position: absolute;
-            /* Genişlik artırıldı ve boyuna tam oturtuldu */
-            width: 54px; height: 14px;
-            background: repeating-linear-gradient(45deg, var(--kis-kirmizi), var(--kis-kirmizi) 5px, white 5px, white 10px);
-            border-radius: 8px;
-            /* Boyun hizasına çekildi */
-            top: 42px; left: 6px; 
-            z-index: 3;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+        .bayrak {
+            width: 30px;
+            height: 35px;
+            clip-path: polygon(0 0, 100% 0, 50% 100%); /* Üçgen şekli */
+            transform-origin: top center;
+            animation: bayrakSalla 3s infinite ease-in-out alternate;
+            position: relative;
+            top: 2px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
         }
 
-        @keyframes kafaSalla {
-            0% { transform: rotate(-10deg); }
-            100% { transform: rotate(10deg); }
+        /* KIRMIZI - BEYAZ SIRALAMA */
+        .bayrak:nth-child(odd) { 
+            background-color: var(--kirmizi); /* Tek sayılar Kırmızı */
+            animation-duration: 3.2s;
+        }
+        .bayrak:nth-child(even) { 
+            background-color: #ffffff; /* Çift sayılar Beyaz */
+            animation-duration: 2.5s;
+        }
+
+        @keyframes bayrakSalla {
+            0% { transform: rotate(-8deg); }
+            100% { transform: rotate(8deg); }
         }
 
         /* --- YAZI TİPİ --- */
@@ -291,20 +289,11 @@
     <div class="sahne-konteyner" id="kisSahnesi">
         <div class="kar-alani" id="karAlani"></div>
 
-        <div class="baykus-komple baykus-sol">
-            <div class="bere"></div>
-            <div class="atki"></div>
-            <div class="baykus-emoji">🦉</div>
-        </div>
-
         <div class="tahta">
+            <div class="sus-ipi">
+                <div class="bayrak"></div> <div class="bayrak"></div> <div class="bayrak"></div> <div class="bayrak"></div> <div class="bayrak"></div> <div class="bayrak"></div> <div class="bayrak"></div> </div>
+
             a e ı i<br>o ö u ü
-        </div>
-        
-        <div class="baykus-komple baykus-sag">
-            <div class="bere"></div>
-            <div class="atki"></div>
-            <div class="baykus-emoji">🦉</div>
         </div>
     </div>
 
@@ -600,7 +589,7 @@
 
     window.onload = function() {
         sistemiKur();
-        karYagdir(); // Sayfa yüklenince kar başlasın
+        karYagdir(); 
     };
 </script>
 </body>
